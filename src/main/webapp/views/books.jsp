@@ -32,7 +32,8 @@
             <td>${book.price}</td>
             <td>${book.status?"Còn bán":"Hết sách"}</td>
             <td>
-
+                <a href="<%=request.getContextPath()%>/bookController/initUpdate?bookId=${book.bookId}">Update</a>
+                <a href="<%=request.getContextPath()%>/bookController/delete?bookId=${book.bookId}">Delete</a>
             </td>
         </tr>
     </c:forEach>

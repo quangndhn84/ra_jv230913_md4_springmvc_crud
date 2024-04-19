@@ -59,4 +59,70 @@ public class BookRepositoryImp implements BookRepository {
         }
         return result;
     }
+
+    @Override
+    public Books getBookById(int bookId) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        Books book = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{call get_book_by_id(?)}");
+            callSt.setInt(1, bookId);
+            ResultSet rs = callSt.executeQuery();
+            book = new Books();
+            if (rs.next()) {
+                book.setBookId(rs.getInt("book_id"));
+                book.setBookName(rs.getString("book_name"));
+                book.setPrice(rs.getFloat("price"));
+                book.setStatus(rs.getBoolean("book_status"));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return book;
+    }
+
+    @Override
+    public boolean update(Books book) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        boolean result = false;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{call update_book(?,?,?,?)}");
+            callSt.setInt(1, book.getBookId());
+            callSt.setString(2, book.getBookName());
+            callSt.setFloat(3, book.getPrice());
+            callSt.setBoolean(4, book.isStatus());
+            callSt.executeUpdate();
+            result = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean delete(int bookId) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        boolean result = false;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{call delete_book(?)}");
+            callSt.setInt(1, bookId);
+            callSt.executeUpdate();
+            result = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return result;
+    }
 }
